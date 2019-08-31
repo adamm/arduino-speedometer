@@ -1,8 +1,8 @@
 /*************************************************************************
-  Arduino Library for Freematics OBD-II UART Adapter
-  Distributed under BSD License
-  Visit http://freematics.com for more information
-  (C)2012-2016 Stanley Huang <stanleyhuangyc@gmail.com>
+* Arduino Library for Freematics OBD-II UART Adapter
+* Distributed under BSD License
+* Visit https://freematics.com for more information
+* (C)2012-2019 Stanley Huang <stanley@freematics.com.au>
 *************************************************************************/
 
 #include <Arduino.h>
@@ -83,22 +83,22 @@ extern HardwareSerial Serial1;
 #define PID_BATTERY_VOLTAGE 0x24
 
 typedef enum {
-  PROTO_AUTO = 0,
-  PROTO_ISO_9141_2 = 3,
-  PROTO_KWP2000_5KBPS = 4,
-  PROTO_KWP2000_FAST = 5,
-  PROTO_CAN_11B_500K = 6,
-  PROTO_CAN_29B_500K = 7,
-  PROTO_CAN_29B_250K = 8,
-  PROTO_CAN_11B_250K = 9,
+    PROTO_AUTO = 0,
+    PROTO_ISO_9141_2 = 3,
+    PROTO_KWP2000_5KBPS = 4,
+    PROTO_KWP2000_FAST = 5,
+    PROTO_CAN_11B_500K = 6,
+    PROTO_CAN_29B_500K = 7,
+    PROTO_CAN_29B_250K = 8,
+    PROTO_CAN_11B_250K = 9,
 } OBD_PROTOCOLS;
 
 // states
 typedef enum {
-  OBD_DISCONNECTED = 0,
-  OBD_CONNECTING = 1,
-  OBD_CONNECTED = 2,
-  OBD_FAILED = 3
+    OBD_DISCONNECTED = 0,
+    OBD_CONNECTING = 1,
+    OBD_CONNECTED = 2,
+	OBD_FAILED = 3
 } OBD_STATES;
 
 uint16_t hex2uint16(const char *p);
@@ -106,74 +106,72 @@ uint8_t hex2uint8(const char *p);
 
 class COBD
 {
-  public:
-    // begin serial UART
-    virtual byte begin();
-    // terminate communication channel
-    virtual void end();
-    // initialize OBD-II connection
-    virtual bool init(OBD_PROTOCOLS protocol = PROTO_AUTO);
-    // reset OBD-II connection
-    virtual void reset();
-    // un-initialize OBD-II connection
-    virtual void uninit();
-    // set serial baud rate
-    virtual bool setBaudRate(unsigned long baudrate);
-    // get connection state
-    virtual OBD_STATES getState() {
-      return m_state;
-    }
-    // read specified OBD-II PID value
-    virtual bool readPID(byte pid, int& result);
-    // read multiple (up to 8) OBD-II PID values, return number of values obtained
-    virtual byte readPID(const byte pid[], byte count, int result[]);
-    // set device into low power mode
-    virtual void enterLowPowerMode();
-    // wake up device from low power mode
-    virtual void leaveLowPowerMode();
-    // send AT command and receive response (return bytes received)
-    virtual byte sendCommand(const char* cmd, char* buf, byte bufsize, int timeout = OBD_TIMEOUT_LONG);
-    // read diagnostic trouble codes (return number of DTCs read)
-    virtual byte readDTC(uint16_t codes[], byte maxCodes = 1);
-    // clear diagnostic trouble code
-    virtual void clearDTC();
-    // get battery voltage (works without ECU)
-    virtual float getVoltage();
-    // get VIN as a string, buffer length should be >= OBD_RECV_BUF_SIZE
-    virtual bool getVIN(char* buffer, byte bufsize);
-    // initialize MEMS sensor (enable or disable sensor fusion by quanterion algorithm)
-    virtual bool memsInit(bool fusion = false);
-    // read out MEMS data (acc for accelerometer, gyr for gyroscope, temp in 0.1 celcius degree)
-    virtual bool memsRead(int16_t* acc, int16_t* gyr = 0, int16_t* mag = 0, int16_t* temp = 0);
-    // get computed orientation values
-    virtual bool memsOrientation(float& yaw, float& pitch, float& roll);
-    // retrive and parse the response of specifie PID
-    virtual void debugOutput(const char *s);
-    virtual bool getResult(byte& pid, int& result);
-    // determine if the PID is supported
-    virtual bool isValidPID(byte pid);
-    // get adapter firmware version
-    virtual byte getVersion();
-    // set current PID mode
-    byte dataMode = 1;
-    // occurrence of errors
-    byte errors = 0;
-    // bit map of supported PIDs
-    byte pidmap[4 * 4] = {0};
-  protected:
-    virtual char* getResponse(byte& pid, char* buffer, byte bufsize);
-    virtual int receive(char* buffer, int bufsize, unsigned int timeout = OBD_TIMEOUT_SHORT);
-    virtual void write(const char* s);
-    virtual uint8_t getPercentageValue(char* data);
-    virtual uint16_t getLargeValue(char* data);
-    virtual uint8_t getSmallValue(char* data);
-    virtual int16_t getTemperatureValue(char* data);
-    virtual int normalizeData(byte pid, char* data);
-    virtual byte checkErrorMessage(const char* buffer);
-    virtual char* getResultValue(char* buf);
-    OBD_STATES m_state = OBD_DISCONNECTED;
-  private:
-    void recover();
-    virtual void idleTasks() {}
-    bool m_fusion = false;
+public:
+	// begin serial UART
+	virtual byte begin();
+	// terminate communication channel
+	virtual void end();
+	// initialize OBD-II connection
+	virtual bool init(OBD_PROTOCOLS protocol = PROTO_AUTO);
+	// reset OBD-II connection
+	virtual void reset();
+	// un-initialize OBD-II connection
+	virtual void uninit();
+	// set serial baud rate
+	virtual bool setBaudRate(unsigned long baudrate);
+	// get connection state
+	virtual OBD_STATES getState() { return m_state; }
+	// read specified OBD-II PID value
+	virtual bool readPID(byte pid, int& result);
+	// read multiple (up to 8) OBD-II PID values, return number of values obtained
+	virtual byte readPID(const byte pid[], byte count, int result[]);
+	// set device into low power mode
+	virtual void enterLowPowerMode();
+	// wake up device from low power mode
+	virtual void leaveLowPowerMode();
+	// send AT command and receive response (return bytes received)
+	virtual byte sendCommand(const char* cmd, char* buf, byte bufsize, int timeout = OBD_TIMEOUT_LONG);
+	// read diagnostic trouble codes (return number of DTCs read)
+	virtual byte readDTC(uint16_t codes[], byte maxCodes = 1);
+	// clear diagnostic trouble code
+	virtual void clearDTC();
+	// get battery voltage (works without ECU)
+	virtual float getVoltage();
+	// get VIN as a string, buffer length should be >= OBD_RECV_BUF_SIZE
+	virtual bool getVIN(char* buffer, byte bufsize);
+	// initialize MEMS sensor (enable or disable sensor fusion by quanterion algorithm)
+	virtual bool memsInit(bool fusion = false);
+	// read out MEMS data (acc for accelerometer, gyr for gyroscope, temp in 0.1 celcius degree)
+	virtual bool memsRead(int16_t* acc, int16_t* gyr = 0, int16_t* mag = 0, int16_t* temp = 0);
+	// get computed orientation values
+	virtual bool memsOrientation(float& yaw, float& pitch, float& roll);
+	// retrive and parse the response of specifie PID
+	virtual bool getResult(byte& pid, int& result);
+	// determine if the PID is supported
+	virtual bool isValidPID(byte pid);
+	// get adapter firmware version
+	virtual byte getVersion();
+	// set current PID mode
+	byte dataMode = 1;
+	// occurrence of errors
+	byte errors = 0;
+	// bit map of supported PIDs
+	byte pidmap[4 * 4] = {0};
+protected:
+	virtual char* getResponse(byte& pid, char* buffer, byte bufsize);
+	virtual int receive(char* buffer, int bufsize, unsigned int timeout = OBD_TIMEOUT_SHORT);
+	virtual void write(const char* s);
+	virtual uint8_t getPercentageValue(char* data);
+	virtual uint16_t getLargeValue(char* data);
+	virtual uint8_t getSmallValue(char* data);
+	virtual int16_t getTemperatureValue(char* data);
+	virtual int normalizeData(byte pid, char* data);
+	virtual byte checkErrorMessage(const char* buffer);
+	virtual char* getResultValue(char* buf);
+	OBD_STATES m_state = OBD_DISCONNECTED;
+private:
+	void recover();
+	virtual void idleTasks() {}
+	bool m_fusion = false;
 };
+
