@@ -7,7 +7,7 @@
 
 #include "OBD2UART.h"
 
-//#define DEBUG Serial
+#define DEBUG Serial
 
 uint16_t hex2uint16(const char *p)
 {
@@ -332,11 +332,7 @@ byte COBD::begin()
 	long baudrates[] = {115200, 38400};
 	byte version = 0;
 	for (byte n = 0; n < sizeof(baudrates) / sizeof(baudrates[0]); n++) {
-#ifndef ESP32
-		OBDUART.begin(baudrates[n]);
-#else
-		OBDUART.begin(baudrates[n], SERIAL_8N1, 16, 17);
-#endif
+		OBDUART.begin(baudrates[n], SERIAL_8N1, SERIAL_RX_PIN, SERIAL_TX_PIN);
 		version = getVersion();
 		if (version != 0) break;
 		OBDUART.end();		 
@@ -639,4 +635,3 @@ void COBD::debugOutput(const char *s)
 	DEBUG.print(s);
 }
 #endif
-

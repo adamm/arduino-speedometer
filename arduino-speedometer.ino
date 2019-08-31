@@ -1,4 +1,7 @@
+extern HardwareSerial Serial2;
 #define OBDUART Serial2
+#define SERIAL_RX_PIN 13
+#define SERIAL_TX_PIN 15
 
 #include "OBD2UART.h"
 #include "ht16k33.h"
