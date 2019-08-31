@@ -1,16 +1,10 @@
 #define OBDUART Serial2
 
-//#include <Adafruit_DotStar.h>
-#include <Wire.h>
 #include "OBD2UART.h"
 #include "ht16k33.h"
 #include "asciifont.h"
 
 
-#define DOTSTAR_DATAPIN   7
-#define DOTSTAR_CLOCKPIN  8
-
-//Adafruit_DotStar px = Adafruit_DotStar(1, DOTSTAR_DATAPIN, DOTSTAR_CLOCKPIN, DOTSTAR_BRG);
 HT16K33 ht;
 COBD obd;
 
@@ -27,11 +21,6 @@ void setup() {
   Serial.println("OBD begin");
 //  while (!obd.init(PROTO_CAN_29B_500K));
   Serial.println("OBD ready");
-
-  //  px.begin();
-  //  px.setBrightness(200);
-  //  px.setPixelColor(0, 0, 0, 0);
-  //  px.show();
 
   // initialize everything, 0x00 is the i2c address for the first one (0x70 is added in the class).
   ht.begin(0x01);
@@ -111,13 +100,6 @@ void loop() {
 //  }
 //
 //  msDelay = speed * 2;
-//
-//  //  if (faster)
-//  //    px.setPixelColor(0, speed, 0, 0);
-//  //  else
-//  //    px.setPixelColor(0, 0, speed, 0);
-//  //  px.show();
-//
 //
 //  delay(msDelay);
 }
