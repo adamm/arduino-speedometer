@@ -10,18 +10,6 @@
 #define OBD_TIMEOUT_SHORT 1000 /* ms */
 #define OBD_TIMEOUT_LONG 10000 /* ms */
 
-#ifndef OBDUART
-#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168P__)
-#define OBDUART Serial
-#else
-#define OBDUART Serial1
-#endif
-#endif
-
-#ifdef ESP32
-extern HardwareSerial Serial1;
-#endif
-
 // Mode 1 PIDs
 #define PID_ENGINE_LOAD 0x04
 #define PID_COOLANT_TEMP 0x05
@@ -151,6 +139,7 @@ public:
 	virtual bool isValidPID(byte pid);
 	// get adapter firmware version
 	virtual byte getVersion();
+  void debugOutput(const char *s);
 	// set current PID mode
 	byte dataMode = 1;
 	// occurrence of errors
@@ -174,4 +163,3 @@ private:
 	virtual void idleTasks() {}
 	bool m_fusion = false;
 };
-

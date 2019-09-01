@@ -5,9 +5,15 @@
 * (C)2012-2018 Stanley Huang <stanley@freematics.com.au>
 *************************************************************************/
 
-#include "OBD2UART.h"
+#define OBDUART Serial
+#define DEBUG softSerial
 
-#define DEBUG Serial
+#include <Arduino.h>
+#include <SoftwareSerial.h>
+
+extern SoftwareSerial softSerial;
+
+#include "OBD2UART.h"
 
 uint16_t hex2uint16(const char *p)
 {
@@ -332,7 +338,7 @@ byte COBD::begin()
 	long baudrates[] = {115200, 38400};
 	byte version = 0;
 	for (byte n = 0; n < sizeof(baudrates) / sizeof(baudrates[0]); n++) {
-		OBDUART.begin(baudrates[n], SERIAL_8N1, SERIAL_RX_PIN, SERIAL_TX_PIN);
+		OBDUART.begin(baudrates[n]);
 		version = getVersion();
 		if (version != 0) break;
 		OBDUART.end();		 
@@ -347,7 +353,7 @@ byte COBD::getVersion()
 		char buffer[32];
 		if (sendCommand("ATI\r", buffer, sizeof(buffer), 200)) {
 			char *p = strchr(buffer, ' ');
-			if (p) {
+      if (p) {
 				p += 2;
 				version = (*p - '0') * 10 + (*(p + 2) - '0');
 				break;
@@ -463,8 +469,8 @@ bool COBD::init(OBD_PROTOCOLS protocol)
 		return true;
 	} else {
 #ifdef DEBUG
-		Serial.print("Stage:");
-		Serial.println(stage);
+		DEBUG.print("Stage:");
+		DEBUG.println(stage);
 #endif
 		reset();
 		return false;
@@ -626,12 +632,12 @@ bool COBD::memsOrientation(float& yaw, float& pitch, float& roll)
 	return success;
 }
 
-#ifdef DEBUG
 void COBD::debugOutput(const char *s)
 {
+#ifdef DEBUG
 	DEBUG.print('[');
 	DEBUG.print(millis());
 	DEBUG.print(']');
 	DEBUG.print(s);
-}
 #endif
+}

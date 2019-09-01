@@ -1,29 +1,29 @@
-extern HardwareSerial Serial2;
-#define OBDUART Serial2
-#define SERIAL_RX_PIN 13
-#define SERIAL_TX_PIN 15
 
-#include "OBD2UART.h"
+#include <Arduino.h>
+#include <SoftwareSerial.h>
 #include "ht16k33.h"
 #include "asciifont.h"
-
-
-HT16K33 ht;
-COBD obd;
+#include "OBD2UART.h"
 
 boolean faster = true;
 int speed = 0;
 int rate = 1;
 int msDelay = 100;
 
+HT16K33 ht;
+COBD obd;
+
+extern SoftwareSerial softSerial(A2, A3);
+
+
 void setup() {
-  Serial.begin(115200);
-  while (!Serial);
-  Serial.println("Serial ready");
+  softSerial.begin(38400);
+//  while (!softSerial);
+  softSerial.println("Serial ready");
   obd.begin();
-  Serial.println("OBD begin");
-//  while (!obd.init(PROTO_CAN_29B_500K));
-  Serial.println("OBD ready");
+  softSerial.println("OBD begin");
+  while (!obd.init(PROTO_CAN_11B_500K));
+  softSerial.println("OBD ready");
 
   // initialize everything, 0x00 is the i2c address for the first one (0x70 is added in the class).
   ht.begin(0x01);
@@ -43,14 +43,14 @@ void loop() {
   char c;
   int  s;
   if (obd.readPID(PID_RPM, s)) {
-    Serial.print("Speed: ");
-    Serial.println(s);
+    softSerial.print("Speed: ");
+    softSerial.println(s);
     //  ht.clearAll();
     if (s >= 1000) {
       c = int(s / 1000);
       ht.set16Seg(0, c + '0');
-      Serial.print("0:");
-      Serial.println(c, DEC);
+      softSerial.print("0:");
+      softSerial.println(c, DEC);
       s = int(s % 1000);
     }
     else {
@@ -59,8 +59,8 @@ void loop() {
     if (s >= 100) {
       c = int(s / 100);
       ht.set16Seg(1, c + '0');
-      Serial.print("1:");
-      Serial.println(c, DEC);
+      softSerial.print("1:");
+      softSerial.println(c, DEC);
       s = int(s % 100);
     }
     else if (speed >= 100) {
@@ -72,8 +72,8 @@ void loop() {
     if (s >= 10) {
       c = int(s / 10);
       ht.set16Seg(2, c + '0');
-      Serial.print("2:");
-      Serial.println(c, DEC);
+      softSerial.print("2:");
+      softSerial.println(c, DEC);
       s = int(s % 10);
     }
     else if (speed >= 10) {
@@ -84,8 +84,8 @@ void loop() {
     }
     c = s;
     ht.set16Seg(3, c + '0');
-    Serial.print("3:");
-    Serial.println(c, DEC);
+    softSerial.print("3:");
+    softSerial.println(c, DEC);
     ht.sendLed();
   }
 
